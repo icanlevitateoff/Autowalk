@@ -1,4 +1,3 @@
-- Fabric port of AutoWalk for Minecraft 26.1 – 26.3 (one jar for all of them)
-- Auto Walk (R), Auto Pick (B) and Auto Jump (G) toggle keys, rebindable under the "Auto Key" category
-- `config/autowalk.properties` with `autoSprint` and `autoWalkWithGUI` (both on by default)
-- Requires Fabric API
+- Moving while a menu or inventory is open is now the `allowMovementInMenus` config option, **off by default**. Auto Walk, Auto Pick and Auto Jump pause while a menu is open and resume when you close it.
+- **Warning:** moving in menus is easily detected by server anti-cheats and can get you kicked or banned. Only enable it on servers that allow it.
+- Replaces the old `autoWalkWithGUI` option, which was on by default. It's removed from existing configs automatically, so check `allowMovementInMenus` if you relied on it.

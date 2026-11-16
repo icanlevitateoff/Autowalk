@@ -58,7 +58,7 @@ public class AutoWalkClient implements ClientModInitializer {
 	private boolean jumpHeld;
 
 	private boolean autoSprint = true;
-	private boolean autoWalkWithGUI = true;
+	private boolean allowMovementInMenus = false;
 
 	private MethodHandle screenGetter;
 
@@ -113,12 +113,15 @@ public class AutoWalkClient implements ClientModInitializer {
 			drain(forward);
 		}
 
-		boolean walkNow = walking && (autoWalkWithGUI || !isScreenOpen(client));
+		// With a menu or inventory open, hold nothing unless allowMovementInMenus is on.
+		// The toggles stay on, so everything resumes once the menu closes.
+		boolean active = allowMovementInMenus || !isScreenOpen(client);
+		boolean walkNow = walking && active;
 
 		// Re-applied every tick because opening a screen releases all key mappings.
 		forwardHeld = apply(forward, walkNow, forwardHeld);
-		attackHeld = apply(attack, picking, attackHeld);
-		jumpHeld = apply(jump, jumping, jumpHeld);
+		attackHeld = apply(attack, picking && active, attackHeld);
+		jumpHeld = apply(jump, jumping && active, jumpHeld);
 
 		if (walkNow && autoSprint && !player.isSprinting()) {
 			player.setSprinting(true);
@@ -153,7 +156,7 @@ public class AutoWalkClient implements ClientModInitializer {
 		try {
 			return screenGetter.invoke(client) != null;
 		} catch (Throwable t) {
-			LOGGER.error("Could not read the open screen, ignoring autoWalkWithGUI from now on", t);
+			LOGGER.error("Could not read the open screen, menus can no longer be detected", t);
 			screenGetter = null;
 			return false;
 		}
@@ -177,7 +180,7 @@ public class AutoWalkClient implements ClientModInitializer {
 			return lookup.unreflectGetter(Minecraft.class.getField("screen"))
 					.asType(MethodType.methodType(Object.class, Minecraft.class));
 		} catch (ReflectiveOperationException e) {
-			LOGGER.warn("Could not find the open screen on this Minecraft version; autoWalkWithGUI=false will have no effect", e);
+			LOGGER.warn("Could not find the open screen on this Minecraft version; auto keys will keep running in menus", e);
 			return null;
 		}
 	}
@@ -201,15 +204,21 @@ public class AutoWalkClient implements ClientModInitializer {
 				}
 			}
 			autoSprint = Boolean.parseBoolean(props.getProperty("autoSprint", "true"));
-			autoWalkWithGUI = Boolean.parseBoolean(props.getProperty("autoWalkWithGUI", "true"));
+			allowMovementInMenus = Boolean.parseBoolean(props.getProperty("allowMovementInMenus", "false"));
+			props.remove("autoWalkWithGUI"); // replaced by allowMovementInMenus in v1.1.0
 
 			props.setProperty("autoSprint", Boolean.toString(autoSprint));
-			props.setProperty("autoWalkWithGUI", Boolean.toString(autoWalkWithGUI));
+			props.setProperty("allowMovementInMenus", Boolean.toString(allowMovementInMenus));
 			Files.createDirectories(file.getParent());
 			try (Writer writer = Files.newBufferedWriter(file)) {
 				props.store(writer, "AutoWalk config\n"
 						+ " autoSprint: sprint while auto walking\n"
-						+ " autoWalkWithGUI: keep walking while a menu or inventory is open");
+						+ " allowMovementInMenus: keep auto walk, pick and jump running while a menu or inventory is open\n"
+						+ "   WARNING: moving while a menu or inventory is open is easily detected by server\n"
+						+ "   anti-cheats and can get you kicked or banned. Only enable it where that is allowed.");
+			if (allowMovementInMenus) {
+				LOGGER.warn("allowMovementInMenus is enabled. Moving in menus is easily detected by server anti-cheats.");
+			}
 			}
 		} catch (Exception e) {
 			LOGGER.error("Problem loading config, using defaults", e);

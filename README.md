@@ -23,7 +23,9 @@ All keys are rebindable under **Options → Controls → Key Binds → Auto Key*
 | Option | Default | Description |
 | --- | --- | --- |
 | `autoSprint` | `true` | Sprint while auto walking. |
-| `autoWalkWithGUI` | `true` | Keep walking while a menu or inventory is open. |
+| `allowMovementInMenus` | `false` | Keep Auto Walk, Auto Pick and Auto Jump running while a menu or inventory is open. |
+
+> **Warning:** moving while a menu or inventory is open is easily detected by server anti-cheats and can get you kicked or banned. Only enable `allowMovementInMenus` on servers that allow it. With it off, the auto keys pause while a menu is open and resume when you close it.
 
 ## Building
 ```
