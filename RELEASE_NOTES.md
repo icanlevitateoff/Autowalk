@@ -1,0 +1,4 @@
+- Fabric port of AutoWalk for Minecraft 26.1 – 26.3 (one jar for all of them)
+- Auto Walk (R), Auto Pick (B) and Auto Jump (G) toggle keys, rebindable under the "Auto Key" category
+- `config/autowalk.properties` with `autoSprint` and `autoWalkWithGUI` (both on by default)
+- Requires Fabric API

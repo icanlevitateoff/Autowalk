@@ -1,0 +1,25 @@
+{
+	"schemaVersion": 1,
+	"id": "autowalk",
+	"version": "${version}",
+	"name": "AutoWalk",
+	"description": "Adds toggle keys to walk, mine and jump automatically. Fabric port of wwrpg's AutoWalk mod.",
+	"authors": ["IcanLevitate"],
+	"contributors": ["wwrpg (original AutoWalk mod)"],
+	"contact": {
+		"sources": "https://github.com/icanlevitateoff/Autowalk",
+		"issues": "https://github.com/icanlevitateoff/Autowalk/issues"
+	},
+	"license": "GPL-3.0-only",
+	"environment": "client",
+	"entrypoints": {
+		"client": ["io.icanlevitateoff.autowalk.AutoWalkClient"]
+	},
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": ">=26.1 <26.4",
+		"java": ">=25",
+		"fabric-key-mapping-api-v1": "*",
+		"fabric-lifecycle-events-v1": "*"
+	}
+}
